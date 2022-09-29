@@ -4,27 +4,27 @@ using UnityEngine;
 
 public class RigidbodyMovement : MonoBehaviour
 {
-    private Vector3 PlayerMovementInput;
-    private Vector2 PlayerMouseInput;
+    private Vector3 playerMovementInput;
+    private Vector2 playerMouseInput;
     private float xRot;
     private bool isGrounded;
 
     [SerializeField] private Animator animator;
 
-    [SerializeField] private LayerMask FloorMask;
-    [SerializeField] private Transform FeetTransform;
-    [SerializeField] private Transform PlayerCamera;
-    [SerializeField] private Rigidbody PlayerBody;
+    [SerializeField] private LayerMask floorMask;
+    [SerializeField] private Transform feetTransform;
+    [SerializeField] private Transform playerCamera;
+    [SerializeField] private Rigidbody playerBody;
     [Space]
-    [SerializeField] private float Speed;
-    [SerializeField] private float Sensitivity;
-    [SerializeField] private float JumpForce;
-    [SerializeField] private float CameraAngle;
+    [SerializeField] private float speed;
+    [SerializeField] private float sensitivity;
+    [SerializeField] private float jumpForce;
+    [SerializeField] private float cameraAngle;
 
     private void Update()
     {
-        PlayerMovementInput = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical"));
-        if (PlayerMovementInput.x != 0 || PlayerMovementInput.z != 0)
+        playerMovementInput = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical"));
+        if (playerMovementInput.x != 0 || playerMovementInput.z != 0)
         {
             animator.SetBool("IsWalking", true);
         }
@@ -33,21 +33,19 @@ public class RigidbodyMovement : MonoBehaviour
             animator.SetBool("IsWalking", false);
         }
 
-        if (Physics.CheckSphere(FeetTransform.position, 0.1f, FloorMask))
+        if (Physics.CheckSphere(feetTransform.position, 0.1f, floorMask))
         {
             isGrounded = true;
-            print("Not Jumping");
             animator.SetBool("IsJumping", false);
         }
         else
         {
             isGrounded = false;
-            print("Jumping");
             animator.SetBool("IsJumping", true);
         }
 
 
-        PlayerMouseInput = new Vector2(Input.GetAxis("Mouse X"), 0f);
+        playerMouseInput = new Vector2(Input.GetAxis("Mouse X"), 0f);
 
         MovePlayer();
         MovePlayerCamera();
@@ -55,26 +53,22 @@ public class RigidbodyMovement : MonoBehaviour
 
     private void MovePlayer()
     {
-        Vector3 MoveVector = transform.TransformDirection(PlayerMovementInput) * Speed;
-        PlayerBody.velocity = new Vector3(MoveVector.x, PlayerBody.velocity.y, MoveVector.z);
+        Vector3 moveVector = transform.TransformDirection(playerMovementInput) * speed;
+        playerBody.velocity = new Vector3(moveVector.x, playerBody.velocity.y, moveVector.z);
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
             if (isGrounded)
             {
-                PlayerBody.AddForce(Vector3.up * JumpForce, ForceMode.Impulse);
+                playerBody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
             }
         }
     }
 
     private void MovePlayerCamera()
     {
-        xRot -= PlayerMouseInput.y * Sensitivity;
-
-        transform.Rotate(0f, PlayerMouseInput.x * Sensitivity, 0f);
-        PlayerCamera.transform.localRotation = Quaternion.Euler(xRot + CameraAngle, 0f, 0f);
+        transform.Rotate(0f, playerMouseInput.x * sensitivity, 0f);
+        playerCamera.transform.localRotation = Quaternion.Euler(cameraAngle, 0f, 0f);
     }
-
-
 }
 
